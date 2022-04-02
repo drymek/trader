@@ -19,12 +19,7 @@ func CreateFromTemplate(src string, dst string) error {
 	}
 	defer destination.Close()
 
-	x, err := io.Copy(destination, source)
-	_ = x
-	y, err := source.Stat()
-	_ = y
-	z, err := destination.Stat()
-	_ = z
+	_, err = io.Copy(destination, source)
 
 	return err
 }
