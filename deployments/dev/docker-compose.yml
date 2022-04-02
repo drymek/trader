@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  trader:
+    platform: linux/amd64
+    container_name: trader
+    image: registry.dryka.pl/trader:latest
+    entrypoint: /entrypoint.sh
+    build:
+      context: ../../
+      dockerfile: deployments/Dockerfile
+      target: builder
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
+      - ./../../:/go/src/trader
+    ports:
+      - "8080:8080"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - NEWRELIC_CONFIG_LICENSE=${NEWRELIC_CONFIG_LICENSE}

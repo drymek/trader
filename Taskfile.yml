@@ -1,0 +1,50 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+
+silent: true
+
+tasks:
+  default:
+    cmds:
+      - task --list
+
+  build:
+    desc: Run build images
+    cmds:
+      - docker-compose -f deployments/dev/docker-compose.yml build --progress=plain
+
+  "prod:build":
+    desc: Run build prod images
+    cmds:
+      - docker build -t registry.dryka.pl/trader:latest -f deployments/Dockerfile .
+
+  dev:
+    desc: Run development environment
+    deps: ["build"]
+    cmds:
+      - docker-compose -f deployments/dev/docker-compose.yml up -d
+    env:
+      ENVIRONMENT: development
+
+  test:
+    desc: Run test environment
+    cmds:
+      - docker-compose -f deployments/dev/docker-compose.yml up -d
+      - docker logs -f --tail=10 trader
+    env:
+      ENVIRONMENT: test
+
+  "test:watch":
+    desc: Run test in watch mode
+    deps: ["dev"]
+    cmds:
+      - docker exec -it trader sh -c "reflex -v --start-service --regex='(\.go$|go\.mod|\.js$|\.html$)' -- sh -c 'go test \$(go list ./... | grep -v /vendor/) -v'"
+
+  "vet":
+    desc: Run go vet
+    deps: [ "dev" ]
+    cmds:
+      - docker exec -it trader sh -c "go vet \$(go list ./... | grep -v /vendor/)"

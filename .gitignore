@@ -1,0 +1,5 @@
+.history
+.vscode
+deployments/dev/.env
+database/sqlite/database.sqlite
+database/sqlite/database_test.sqlite

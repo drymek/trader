@@ -1,0 +1,8 @@
+.github
+.history
+.vscode
+.idea
+Taskfile.yml
+README.md
+deployments/dev/docker-compose.yml
+deployments/Dockerfile
