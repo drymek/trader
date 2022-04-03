@@ -20,8 +20,8 @@ func TestSuite(t *testing.T) {
 	s := new(Suite)
 
 	err := database.CreateFromTemplate(
-		"database/sqlite/database.sqlite.template",
-		"database/sqlite/database_test.sqlite",
+		"../../../../../database/sqlite/database.sqlite.template",
+		"../../../../../database/sqlite/database_test.sqlite",
 	)
 	if err != nil {
 		t.Fatal(err)

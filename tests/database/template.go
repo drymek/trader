@@ -1,19 +1,18 @@
 package database
 
 import (
-	"fmt"
 	"io"
 	"os"
 )
 
 func CreateFromTemplate(src string, dst string) error {
-	source, err := os.Open(fmt.Sprintf("../../../../../%s", src))
+	source, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer source.Close()
 
-	destination, err := os.Create(fmt.Sprintf("../../../../../%s", dst))
+	destination, err := os.Create(dst)
 	if err != nil {
 		return err
 	}

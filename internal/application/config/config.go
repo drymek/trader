@@ -49,14 +49,14 @@ func (c config) GetOrder() order {
 	return c.Order
 }
 
-func NewConfig() (Config, error) {
+func NewConfig(opts ...env.Options) (Config, error) {
 	c := config{}
-	if err := env.Parse(&c); err != nil {
+	if err := env.Parse(&c, opts...); err != nil {
 		return c, fmt.Errorf("cannot parse main config: %w", err)
 	}
 
 	o := order{}
-	if err := env.Parse(&o); err != nil {
+	if err := env.Parse(&o, opts...); err != nil {
 		return c, fmt.Errorf("cannot parse order config: %w", err)
 	}
 
