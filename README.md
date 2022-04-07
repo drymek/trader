@@ -33,7 +33,7 @@ task test
 # Usage examples
 
 ```bash
-$ echo '{ "u":400900235, "s":"BNBUSDT", "b":"42.5", "B":"1.0", "a":"43.0", "A":"10" }' | http :8080/stream
+$ echo '{ "u":400900235, "s":"BNBUSDT", "b":"42.5", "B":"1.0", "a":"43.0", "A":"10" }' | http --verify=no https://localhost:8080/stream
 HTTP/1.1 200 OK
 Access-Control-Allow-Headers: Origin, Content-Type
 Access-Control-Allow-Methods: GET, POST, OPTIONS

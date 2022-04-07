@@ -3,3 +3,6 @@
 deployments/dev/.env
 database/sqlite/database.sqlite
 database/sqlite/database_test.sqlite
+configs/certificate.crt
+configs/certificate.key
+configs/certificate.csr

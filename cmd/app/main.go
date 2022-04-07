@@ -90,7 +90,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+	if err := srv.ListenAndServeTLS(c.GetCrtFile(), c.GetKeyFile()); err != http.ErrServerClosed {
 		err := l.Log("HTTP server ListenAndServe: %v", err)
 		if err != nil {
 			panic(err)
