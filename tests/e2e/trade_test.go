@@ -53,5 +53,5 @@ func (s *Suite) TestInvalidJsonStream() {
 	s.Nil(err)
 	s.Nil(err2)
 
-	s.Equal(http.StatusInternalServerError, res.StatusCode, "Expected status code 500")
+	s.Equal(http.StatusBadRequest, res.StatusCode, "Expected status code 400")
 }

@@ -6,12 +6,10 @@ import (
 	"net/http"
 	"testing"
 
+	"dryka.pl/trader/internal/application/httpx"
 	"dryka.pl/trader/internal/application/trade/endpoint"
 	request "dryka.pl/trader/internal/application/trade/request"
-	"dryka.pl/trader/internal/application/trade/response"
 	"dryka.pl/trader/internal/domain/trade/model"
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -38,17 +36,10 @@ func (s *EndpointSuite) TestHandleErrorFromService() {
 	service.On("Consider", mock.Anything).
 		Return(fmt.Errorf("Invalid amount"))
 
-	got, err := endpoint.MakeStreamEndpoint(nil, service)(context.TODO(), req)
+	_, err := endpoint.MakeStreamEndpoint(nil, service)(context.TODO(), req)
 
-	s.Nil(err)
-
-	want := response.StreamResponse{}
-
-	if diff := cmp.Diff(want, got, cmpopts.IgnoreUnexported(response.StreamResponse{})); diff != "" {
-		s.T().Fatalf("mismatch (-want +got):\n%v", diff)
-	}
-
-	s.Equal(http.StatusBadRequest, got.(response.StreamResponse).StatusCode())
+	s.Error(err)
+	s.Equal(http.StatusInternalServerError, err.(httpx.StatusCodeHolder).StatusCode())
 }
 
 func (s *EndpointSuite) TestHandleErrorFromTick() {
@@ -56,17 +47,10 @@ func (s *EndpointSuite) TestHandleErrorFromTick() {
 
 	service := new(ServiceMock)
 
-	got, err := endpoint.MakeStreamEndpoint(nil, service)(context.TODO(), req)
+	_, err := endpoint.MakeStreamEndpoint(nil, service)(context.TODO(), req)
 
-	s.Nil(err)
-
-	want := response.StreamResponse{}
-
-	if diff := cmp.Diff(want, got, cmpopts.IgnoreUnexported(response.StreamResponse{})); diff != "" {
-		s.T().Fatalf("mismatch (-want +got):\n%v", diff)
-	}
-
-	s.Equal(http.StatusBadRequest, got.(response.StreamResponse).StatusCode())
+	s.Error(err)
+	s.Equal(http.StatusBadRequest, err.(httpx.StatusCodeHolder).StatusCode())
 }
 
 type ServiceMock struct {
