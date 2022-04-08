@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"dryka.pl/trader/internal/application/httpx"
 	"dryka.pl/trader/internal/infrastructure/logger"
 	httpkit "github.com/go-kit/kit/transport/http"
 )
@@ -27,7 +28,7 @@ func DecodeStreamRequest(logger logger.TraderLogger) httpkit.DecodeRequestFunc {
 				return nil, err2
 			}
 
-			return nil, err
+			return nil, httpx.ErrBadRequest
 		}
 
 		return request, nil

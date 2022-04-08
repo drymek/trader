@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"dryka.pl/trader/internal/application/httpx"
 	requestx "dryka.pl/trader/internal/application/trade/request"
 	"dryka.pl/trader/internal/application/trade/response"
 	"dryka.pl/trader/internal/domain/trade/model"
@@ -19,13 +20,13 @@ func MakeStreamEndpoint(_ logger.TraderLogger, service service.OrderService) end
 		tick, err := model.NewTick(r.UpdateId, r.Symbol, r.BestBidPrice, r.BestBidQuantity, r.BestAskPrice, r.BestAskQuantity)
 		err2 := tick.Validate()
 		if err != nil || err2 != nil {
-			return response.NewStreamResponse(http.StatusBadRequest), nil
+			return nil, httpx.ErrBadRequest
 		}
 
 		err = service.Consider(tick)
 
 		if err != nil {
-			return response.NewStreamResponse(http.StatusBadRequest), nil
+			return nil, httpx.ErrInternalServerError
 		}
 
 		return response.NewStreamResponse(http.StatusOK), nil

@@ -18,12 +18,14 @@ func NewServer(d Dependencies) *mux.Router {
 		tradeEndpoint.MakeStreamEndpoint(l, d.Service),
 		tradeRequest.DecodeStreamRequest(l),
 		httpx.EncodeResponse(l),
+		kithttp.ServerErrorEncoder(httpx.EncodeError(l)),
 	)
 
 	healthcheckHandler := kithttp.NewServer(
 		healthcheck.MakeEndpoint(l),
 		healthcheck.DecodeRequest(),
 		httpx.EncodeResponse(l),
+		kithttp.ServerErrorEncoder(httpx.EncodeError(l)),
 	)
 
 	r := mux.NewRouter()
