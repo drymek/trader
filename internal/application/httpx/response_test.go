@@ -58,10 +58,29 @@ func (s *Suite) TestHeaderResponse() {
 	w.AssertNumberOfCalls(s.T(), "WriteHeader", 0)
 }
 
+func (s *Suite) TestEmptyResponse() {
+	w := new(Writer)
+	//w.On("Write", []byte("{}\n")).Return(3, nil)
+	err := httpx.EncodeResponse(mockx.NewNullLogger())(context.TODO(), w, EmptyResponse{})
+	s.NoError(err)
+	w.AssertNumberOfCalls(s.T(), "Write", 0)
+	w.AssertNumberOfCalls(s.T(), "Header", 0)
+	w.AssertNumberOfCalls(s.T(), "WriteHeader", 0)
+
+	w.AssertNotCalled(s.T(), "Write", mock.Anything)
+}
+
 func NewHeaderResponse(name string, value string) HeaderResponse {
 	headers := make(map[string]string)
 	headers[name] = value
 	return HeaderResponse{headers: headers}
+}
+
+type EmptyResponse struct {
+}
+
+func (r EmptyResponse) NoContent() bool {
+	return true
 }
 
 type HeaderResponse struct {
