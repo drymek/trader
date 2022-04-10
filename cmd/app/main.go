@@ -12,6 +12,7 @@ import (
 	"dryka.pl/trader/internal/domain/trade/model"
 	"dryka.pl/trader/internal/domain/trade/provider"
 	"dryka.pl/trader/internal/domain/trade/service"
+	service2 "dryka.pl/trader/internal/domain/user/service"
 	"dryka.pl/trader/internal/infrastructure/logger"
 	"dryka.pl/trader/internal/infrastructure/persistence/sqlite"
 	"dryka.pl/trader/internal/infrastructure/persistence/sqlite/repository"
@@ -54,11 +55,14 @@ func main() {
 		cancel,
 	)
 
+	accountRepository := repository.NewAccountRepository(connection)
 	dependencies := server.Dependencies{
-		Logger:  l,
-		Config:  c,
-		Service: service,
-		DB:      connection,
+		Logger:            l,
+		Config:            c,
+		Service:           service,
+		DB:                connection,
+		CrudService:       service2.NewAccountService(accountRepository),
+		AccountRepository: accountRepository,
 	}
 
 	muxer := http.TimeoutHandler(server.NewServer(dependencies), c.GetTimeout(), "Timeout!")

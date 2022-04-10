@@ -40,6 +40,9 @@ func (s *AccountService) Fetch(id string) (interface{}, error) {
 }
 
 func (s *AccountService) Create(entity interface{}) error {
+	if entity.(model.Entity).GetID() == "" {
+		entity.(model.Entity).SetID(model.GenerateID())
+	}
 	return s.repository.Create(entity)
 }
 
