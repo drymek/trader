@@ -15,21 +15,21 @@ type accountRepository struct {
 
 func (a *accountRepository) Update(entity interface{}) error {
 	id := entity.(*model.Account).ID
-	filter := bson.D{{Key: "id", Value: id}}
+	filter := bson.D{{"id", id}}
 
 	_, err := a.collection.ReplaceOne(context.TODO(), filter, entity)
 	return err
 }
 
 func (a *accountRepository) Delete(id string) error {
-	filter := bson.D{{Key: "id", Value: id}}
+	filter := bson.D{{"id", id}}
 
 	_, err := a.collection.DeleteOne(context.TODO(), filter)
 	return err
 }
 
-func (a *accountRepository) Find(id string) (interface{}, error) {
-	filter := bson.D{{Key: "id", Value: id}}
+func (a *accountRepository) Find(ID string) (interface{}, error) {
+	filter := bson.D{{"id", ID}}
 
 	var account model.Account
 	err := a.collection.FindOne(context.Background(), filter).Decode(&account)
