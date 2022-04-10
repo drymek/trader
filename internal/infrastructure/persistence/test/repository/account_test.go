@@ -6,6 +6,9 @@ import (
 	"dryka.pl/trader/internal/domain/user/model"
 	"dryka.pl/trader/internal/domain/user/repository"
 	inmemory "dryka.pl/trader/internal/infrastructure/persistence/inmemory/repository"
+	sqlitex "dryka.pl/trader/internal/infrastructure/persistence/sqlite"
+	sqlite "dryka.pl/trader/internal/infrastructure/persistence/sqlite/repository"
+	"dryka.pl/trader/tests/database"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/suite"
 )
@@ -17,9 +20,22 @@ type RepositoryIntegrationSuite struct {
 
 func TestServiceSuite(t *testing.T) {
 	s := new(RepositoryIntegrationSuite)
+	err := database.CreateFromTemplate(
+		"../../../../../database/sqlite/database.sqlite.template",
+		"../../../../../database/sqlite/database_test.sqlite",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	connection, err := sqlitex.NewConnection("../../../../../database/sqlite/database_test.sqlite")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	s.repositories = make(map[string]repository.AccountRepository)
 	s.repositories["inmemory"] = inmemory.NewAccountRepository()
-
+	s.repositories["sqlite"] = sqlite.NewAccountRepository(connection)
 	suite.Run(t, s)
 }
 
@@ -90,9 +106,9 @@ func (s *RepositoryIntegrationSuite) TestUpdate() {
 
 			update := &model.Account{
 				ID:            "123",
-				Owner:         "Marcin Dryka",
-				Balance:       "100.0",
-				Currency:      "PLN",
+				Owner:         "John Doe",
+				Balance:       "300.0",
+				Currency:      "USD",
 				AccountNumber: 123456789,
 			}
 

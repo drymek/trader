@@ -7,12 +7,12 @@ import (
 	"dryka.pl/trader/internal/domain/user/repository"
 )
 
-type AccountRepository struct {
+type accountRepository struct {
 	mu sync.Mutex
 	m  map[string]*model.Account
 }
 
-func (a *AccountRepository) Update(entity interface{}) error {
+func (a *accountRepository) Update(entity interface{}) error {
 	_, err := a.Find(entity.(model.Entity).GetID())
 	if err != nil {
 		return err
@@ -25,7 +25,7 @@ func (a *AccountRepository) Update(entity interface{}) error {
 	return nil
 }
 
-func (a *AccountRepository) Delete(id string) error {
+func (a *accountRepository) Delete(id string) error {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 
@@ -37,7 +37,7 @@ func (a *AccountRepository) Delete(id string) error {
 	return nil
 }
 
-func (a *AccountRepository) Find(ID string) (interface{}, error) {
+func (a *accountRepository) Find(ID string) (interface{}, error) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 
@@ -48,7 +48,7 @@ func (a *AccountRepository) Find(ID string) (interface{}, error) {
 	return nil, repository.ErrAccountNotFound
 }
 
-func (a *AccountRepository) Create(m interface{}) error {
+func (a *accountRepository) Create(m interface{}) error {
 	account, ok := m.(*model.Account)
 	if !ok {
 		return repository.ErrInvalidModel
@@ -67,7 +67,7 @@ func (a *AccountRepository) Create(m interface{}) error {
 }
 
 func NewAccountRepository() repository.AccountRepository {
-	return &AccountRepository{
+	return &accountRepository{
 		mu: sync.Mutex{},
 		m:  make(map[string]*model.Account),
 	}

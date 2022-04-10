@@ -2,15 +2,11 @@ package repository
 
 import (
 	"database/sql"
-	"errors"
 
 	"dryka.pl/trader/internal/domain/trade/model"
 	"dryka.pl/trader/internal/domain/trade/repository"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-var ErrPersistencePrepareError = errors.New("persistence prepare error")
-var ErrPersistenceCannotAddLog = errors.New("persistence cannot add log")
 
 type sqliteAuditRepository struct {
 	db *sql.DB
