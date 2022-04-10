@@ -14,6 +14,8 @@ type Config interface {
 	GetTimeout() time.Duration
 	GetDatabaseFile() string
 	GetOrder() order
+	GetCrtFile() string
+	GetKeyFile() string
 }
 
 type config struct {
@@ -22,7 +24,17 @@ type config struct {
 	HttpAddr              string        `env:"HTTP_ADDR" envDefault:"0.0.0.0:8080"`
 	Timeout               time.Duration `env:"TIMEOUT" envDefault:"3s"`
 	DatabaseFile          string        `env:"DATABASE_FILE" envDefault:"database/sqlite/database.sqlite"`
+	KeyFile               string        `env:"KEY_FILE" envDefault:"./configs/certificate.key"`
+	CrtFile               string        `env:"CRT_FILE" envDefault:"./configs/certificate.crt"`
 	Order                 order
+}
+
+func (c config) GetCrtFile() string {
+	return c.CrtFile
+}
+
+func (c config) GetKeyFile() string {
+	return c.KeyFile
 }
 
 func (c config) GetNewRelicConfigAppName() string {

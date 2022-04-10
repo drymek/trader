@@ -1,5 +1,6 @@
 FROM golang:1.18-alpine as builder
 RUN apk add --no-cache openssh git build-base
+RUN apk add --no-cache openssl
 RUN go install github.com/cespare/reflex@latest
 WORKDIR /go/src/trader
 COPY go.mod /go/src/trader
