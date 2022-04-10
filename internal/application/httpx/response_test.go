@@ -58,7 +58,7 @@ func (s *ResponseSuite) TestHeaderResponse() {
 	w.AssertNumberOfCalls(s.T(), "WriteHeader", 0)
 }
 
-func (s *ResponseSuite) TestEmptyResponse() {
+func (s *Suite) TestEmptyResponse() {
 	w := new(Writer)
 	//w.On("Write", []byte("{}\n")).Return(3, nil)
 	err := httpx.EncodeResponse(mockx.NewNullLogger())(context.TODO(), w, EmptyResponse{})

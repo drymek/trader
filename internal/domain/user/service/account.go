@@ -25,14 +25,14 @@ func (s *AccountService) UpdateOrCreate(entity interface{}) (bool, error) {
 	_, err := s.repository.Find(id)
 
 	if err == repository.ErrAccountNotFound {
-		return true, s.repository.Create(entity)
+		return false, s.repository.Create(entity)
 	}
 
 	if err != nil {
 		return false, err
 	}
 
-	return false, s.repository.Update(entity)
+	return true, s.repository.Update(entity)
 }
 
 func (s *AccountService) Fetch(id string) (interface{}, error) {
@@ -40,9 +40,6 @@ func (s *AccountService) Fetch(id string) (interface{}, error) {
 }
 
 func (s *AccountService) Create(entity interface{}) error {
-	if entity.(model.Entity).GetID() == "" {
-		entity.(model.Entity).SetID(model.GenerateID())
-	}
 	return s.repository.Create(entity)
 }
 
