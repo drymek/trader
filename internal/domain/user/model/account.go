@@ -14,6 +14,10 @@ func (a *Account) GetID() string {
 	return a.ID
 }
 
+func (a *Account) SetID(id string) {
+	a.ID = id
+}
+
 func (a Account) Validate() error {
 	if a.Owner == "" {
 		return ErrInvalidAccount
