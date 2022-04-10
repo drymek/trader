@@ -3,12 +3,22 @@ package httpx_test
 import (
 	"context"
 	"net/http"
+	"testing"
 
 	"dryka.pl/trader/internal/application/httpx"
 	mockx "dryka.pl/trader/tests/mock"
+	"github.com/stretchr/testify/suite"
 )
 
-func (s *Suite) TestSimpleError() {
+type EncoderSuite struct {
+	suite.Suite
+}
+
+func TestEncoderSuite(t *testing.T) {
+	suite.Run(t, new(EncoderSuite))
+}
+
+func (s *ResponseSuite) TestSimpleError() {
 	w := new(Writer)
 	w.On("Write", []byte(`{"error":"simple error"}`)).Return(3, nil)
 	w.On("WriteHeader", http.StatusInternalServerError).Return(http.Header{})
@@ -22,7 +32,7 @@ func (s *Suite) TestSimpleError() {
 	w.AssertCalled(s.T(), "WriteHeader", http.StatusInternalServerError)
 }
 
-func (s *Suite) TestStatusCodeError() {
+func (s *ResponseSuite) TestStatusCodeError() {
 	w := new(Writer)
 	w.On("Write", []byte(`{"error":"status code error"}`)).Return(3, nil)
 	w.On("WriteHeader", http.StatusOK).Return(http.Header{})
@@ -37,7 +47,7 @@ func (s *Suite) TestStatusCodeError() {
 	w.AssertCalled(s.T(), "WriteHeader", http.StatusOK)
 }
 
-func (s *Suite) TestHeaderError() {
+func (s *ResponseSuite) TestHeaderError() {
 	w := new(Writer)
 	w.On("Write", []byte(`{"error":"header error"}`)).Return(3, nil)
 	w.On("WriteHeader", http.StatusInternalServerError).Return(http.Header{})

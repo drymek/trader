@@ -73,7 +73,7 @@ func NewServer(d Dependencies) *mux.Router {
 	r.Handle(newrelic.WrapHandle(app, "/stream", AccessControl(streamHandler))).Methods(http.MethodPost, http.MethodOptions)
 	r.Handle(newrelic.WrapHandle(app, "/healthcheck", AccessControl(healthcheckHandler))).Methods(http.MethodGet)
 	r.Handle(newrelic.WrapHandle(app, "/accounts", AccessControl(accountCreateHandler))).Methods(http.MethodOptions, http.MethodPost)
-	r.Handle(newrelic.WrapHandle(app, "/accounts/{id}", AccessControl(accountUpdateHandler))).Methods(http.MethodOptions, http.MethodPut)
+	r.Handle(newrelic.WrapHandle(app, "/accounts", AccessControl(accountUpdateHandler))).Methods(http.MethodOptions, http.MethodPut)
 	r.Handle(newrelic.WrapHandle(app, "/accounts/{id}", AccessControl(accountFetchHandler))).Methods(http.MethodOptions, http.MethodGet)
 	r.Handle(newrelic.WrapHandle(app, "/accounts/{id}", AccessControl(accountDeleteHandler))).Methods(http.MethodOptions, http.MethodDelete)
 

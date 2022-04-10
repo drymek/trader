@@ -11,15 +11,15 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type Suite struct {
+type ResponseSuite struct {
 	suite.Suite
 }
 
 func TestSuite(t *testing.T) {
-	suite.Run(t, new(Suite))
+	suite.Run(t, new(ResponseSuite))
 }
 
-func (s *Suite) TestSimpleResponse() {
+func (s *ResponseSuite) TestSimpleResponse() {
 	w := new(Writer)
 	w.On("Write", []byte("{}\n")).Return(3, nil)
 	err := httpx.EncodeResponse(mockx.NewNullLogger())(context.TODO(), w, SimpleResponse{})
@@ -31,7 +31,7 @@ func (s *Suite) TestSimpleResponse() {
 	w.AssertCalled(s.T(), "Write", []byte("{}\n"))
 }
 
-func (s *Suite) TestStatusCodeResponse() {
+func (s *ResponseSuite) TestStatusCodeResponse() {
 	w := new(Writer)
 	w.On("Write", []byte("{}\n")).Return(3, nil)
 	w.On("WriteHeader", http.StatusOK).Return(http.Header{})
@@ -46,7 +46,7 @@ func (s *Suite) TestStatusCodeResponse() {
 	w.AssertCalled(s.T(), "Write", []byte("{}\n"))
 }
 
-func (s *Suite) TestHeaderResponse() {
+func (s *ResponseSuite) TestHeaderResponse() {
 	w := new(Writer)
 	w.On("Write", []byte("{}\n")).Return(3, nil)
 	h := make(http.Header)
@@ -58,7 +58,7 @@ func (s *Suite) TestHeaderResponse() {
 	w.AssertNumberOfCalls(s.T(), "WriteHeader", 0)
 }
 
-func (s *Suite) TestEmptyResponse() {
+func (s *ResponseSuite) TestEmptyResponse() {
 	w := new(Writer)
 	//w.On("Write", []byte("{}\n")).Return(3, nil)
 	err := httpx.EncodeResponse(mockx.NewNullLogger())(context.TODO(), w, EmptyResponse{})

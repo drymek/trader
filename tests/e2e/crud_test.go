@@ -229,7 +229,7 @@ func (s *CrudSuite) TestUpdate() {
 	}`
 
 	requestBody := []byte(accountJSON)
-	req, err := http.NewRequest(http.MethodPut, srv.URL+"/accounts/"+account.ID, bytes.NewBuffer(requestBody))
+	req, err := http.NewRequest(http.MethodPut, srv.URL+"/accounts", bytes.NewBuffer(requestBody))
 	req.Header.Set("Content-Type", "application/json")
 	s.Nil(err)
 	res, err := http.DefaultClient.Do(req)

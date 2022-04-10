@@ -35,8 +35,8 @@ func EncodeResponse(logger logger.TraderLogger) kithttp.EncodeResponseFunc {
 			w.WriteHeader(scr.StatusCode())
 		}
 
-		_, hasNoContent := response.(NoContent)
-		if hasNoContent {
+		nc, hasNoContent := response.(NoContent)
+		if hasNoContent && nc.NoContent() {
 			return nil
 		}
 
