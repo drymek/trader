@@ -1,91 +1,41 @@
 package repository
 
 import (
-	"context"
-	"sync"
 	"testing"
-	"time"
 
-	"dryka.pl/trader/internal/application/config"
 	"dryka.pl/trader/internal/domain/user/model"
 	"dryka.pl/trader/internal/domain/user/repository"
 	inmemory "dryka.pl/trader/internal/infrastructure/persistence/inmemory/repository"
-	mongox "dryka.pl/trader/internal/infrastructure/persistence/mongo/repository"
-	sqlitex "dryka.pl/trader/internal/infrastructure/persistence/sqlite"
-	sqlite "dryka.pl/trader/internal/infrastructure/persistence/sqlite/repository"
-	"dryka.pl/trader/tests/database"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RepositoryIntegrationSuite struct {
 	suite.Suite
 	repositories map[string]repository.AccountRepository
-	mu           sync.Mutex
 }
 
 func TestServiceSuite(t *testing.T) {
 	s := new(RepositoryIntegrationSuite)
-	err := database.CreateFromTemplate(
-		"../../../../../database/sqlite/database.sqlite.template",
-		"../../../../../database/sqlite/database_test.sqlite",
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-	connection, _ := sqlitex.NewConnection("../../../../../database/sqlite/database_test.sqlite")
-	c, err := config.NewConfig()
-	if err != nil {
-		t.Fatal(err)
-	}
-	client, err := mongo.NewClient(options.Client().ApplyURI(c.GetMongoURI()))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	err = client.Connect(ctx)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer func(client *mongo.Client, ctx context.Context) {
-		err := client.Disconnect(ctx)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}(client, ctx)
 	s.repositories = make(map[string]repository.AccountRepository)
-	s.repositories["mongo"] = mongox.NewAccountRepository(client)
 	s.repositories["inmemory"] = inmemory.NewAccountRepository()
-	s.repositories["sqlite"] = sqlite.NewAccountRepository(connection)
-	_ = mongox.NewAccountRepository(client)
-	_ = inmemory.NewAccountRepository()
-	_ = sqlite.NewAccountRepository(connection)
-	s.mu = sync.Mutex{}
+
 	suite.Run(t, s)
 }
 
 func (s *RepositoryIntegrationSuite) SetupTest() {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 	for i := range s.repositories {
 		account, err := s.repositories[i].Find("123")
 		if err != nil {
 			return
 		}
-		err = s.repositories[i].Delete(account.(*model.Account).ID)
-		s.NoError(err)
+		_ = s.repositories[i].Delete(account.(*model.Account).ID)
 	}
 }
 
 func (s *RepositoryIntegrationSuite) TestCreateAndFetch() {
 	for i := range s.repositories {
 		s.T().Run(i, func(t *testing.T) {
-			s.mu.Lock()
-			defer s.mu.Unlock()
 			account := &model.Account{
 				ID:            "123",
 				Owner:         "Marcin Dryka",
@@ -106,8 +56,6 @@ func (s *RepositoryIntegrationSuite) TestCreateAndFetch() {
 func (s *RepositoryIntegrationSuite) TestDelete() {
 	for i := range s.repositories {
 		s.T().Run(i, func(t *testing.T) {
-			s.mu.Lock()
-			defer s.mu.Unlock()
 			account := &model.Account{
 				ID:            "123",
 				Owner:         "Marcin Dryka",
@@ -132,8 +80,6 @@ func (s *RepositoryIntegrationSuite) TestDelete() {
 func (s *RepositoryIntegrationSuite) TestUpdate() {
 	for i := range s.repositories {
 		s.T().Run(i, func(t *testing.T) {
-			s.mu.Lock()
-			defer s.mu.Unlock()
 			account := &model.Account{
 				ID:            "123",
 				Owner:         "Marcin Dryka",
@@ -144,9 +90,9 @@ func (s *RepositoryIntegrationSuite) TestUpdate() {
 
 			update := &model.Account{
 				ID:            "123",
-				Owner:         "John Doe",
-				Balance:       "300.0",
-				Currency:      "USD",
+				Owner:         "Marcin Dryka",
+				Balance:       "100.0",
+				Currency:      "PLN",
 				AccountNumber: 123456789,
 			}
 

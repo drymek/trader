@@ -13,9 +13,6 @@ type AccountRepository struct {
 }
 
 func (a *AccountRepository) Update(entity interface{}) error {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
 	_, err := a.Find(entity.(model.Entity).GetID())
 	if err != nil {
 		return err
