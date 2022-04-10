@@ -51,7 +51,8 @@ func (s *CrudSuite) SetupTest() {
 	if err != nil {
 		return
 	}
-	s.AppDependencies.AccountRepository.Delete(account.(*model.Account).ID)
+	err = s.AppDependencies.AccountRepository.Delete(account.(*model.Account).ID)
+	s.Nil(err)
 }
 
 func (s *CrudSuite) TestCreate() {
@@ -97,13 +98,14 @@ func (s *CrudSuite) TestCrateDupplicate() {
 	srv := httptest.NewServer(server.NewServer(s.AppDependencies))
 	defer srv.Close()
 
-	s.AppDependencies.AccountRepository.Create(model.Account{
+	err := s.AppDependencies.AccountRepository.Create(&model.Account{
 		ID:            "123",
 		Owner:         "Marcin Dryka",
 		Balance:       "100.0",
 		Currency:      "PLN",
 		AccountNumber: 123456789,
 	})
+	s.NoError(err)
 
 	accountJSON := `{
 		"id": "123",
@@ -256,7 +258,8 @@ func (s *CrudSuite) TestRemove() {
 		AccountNumber: 123456789,
 	}
 
-	s.AppDependencies.AccountRepository.Create(account)
+	err := s.AppDependencies.AccountRepository.Create(account)
+	s.Nil(err)
 
 	req, err := http.NewRequest(http.MethodDelete, srv.URL+"/accounts/"+account.ID, bytes.NewBuffer([]byte("")))
 	req.Header.Set("Content-Type", "application/json")

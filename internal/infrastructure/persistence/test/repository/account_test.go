@@ -45,12 +45,18 @@ func TestServiceSuite(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	err = client.Connect(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer client.Disconnect(ctx)
+	defer func(client *mongo.Client, ctx context.Context) {
+		err := client.Disconnect(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}(client, ctx)
 	s.repositories = make(map[string]repository.AccountRepository)
 	s.repositories["mongo"] = mongox.NewAccountRepository(client)
 	s.repositories["inmemory"] = inmemory.NewAccountRepository()
