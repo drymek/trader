@@ -16,6 +16,7 @@ type Config interface {
 	GetOrder() order
 	GetCrtFile() string
 	GetKeyFile() string
+	GetMongoURI() string
 }
 
 type config struct {
@@ -26,7 +27,12 @@ type config struct {
 	DatabaseFile          string        `env:"DATABASE_FILE" envDefault:"database/sqlite/database.sqlite"`
 	KeyFile               string        `env:"KEY_FILE" envDefault:"./configs/certificate.key"`
 	CrtFile               string        `env:"CRT_FILE" envDefault:"./configs/certificate.crt"`
+	MongoURI              string        `env:"MONGO_URI" envDefault:"mongodb://root:example@localhost:27017/"`
 	Order                 order
+}
+
+func (c config) GetMongoURI() string {
+	return c.MongoURI
 }
 
 func (c config) GetCrtFile() string {

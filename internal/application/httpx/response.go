@@ -17,6 +17,10 @@ type HeaderHolder interface {
 	Headers() map[string]string
 }
 
+type NoContent interface {
+	NoContent() bool
+}
+
 func EncodeResponse(logger logger.TraderLogger) kithttp.EncodeResponseFunc {
 	return func(_ context.Context, w http.ResponseWriter, response interface{}) error {
 		hr, hasHeaders := response.(HeaderHolder)
@@ -29,6 +33,11 @@ func EncodeResponse(logger logger.TraderLogger) kithttp.EncodeResponseFunc {
 		scr, hasStatusCode := response.(StatusCodeHolder)
 		if hasStatusCode {
 			w.WriteHeader(scr.StatusCode())
+		}
+
+		nc, hasNoContent := response.(NoContent)
+		if hasNoContent && nc.NoContent() {
+			return nil
 		}
 
 		err := json.NewEncoder(w).Encode(response)
