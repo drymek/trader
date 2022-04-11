@@ -18,7 +18,9 @@ EXPOSE 8080
 RUN apk add --no-cache curl
 RUN addgroup -S trader && adduser -S -G trader trader
 
-COPY --from=builder /go/src/trader/trader /go/app/
+COPY --chown=trader --from=builder /go/src/trader/trader /go/app/
+COPY --chown=trader ./database/sqlite/database.sqlite.template /go/app/database.sqlite
+ENV DATABASE_FILE /go/app/database.sqlite
 
 USER trader
 

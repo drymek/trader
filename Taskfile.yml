@@ -19,7 +19,7 @@ tasks:
   "prod:build":
     desc: Run build prod images
     cmds:
-      - docker build -t registry.dryka.pl/trader:latest -f deployments/Dockerfile .
+      - docker build -t drymek/trader:latest -f deployments/Dockerfile .
 
   dev:
     desc: Run development environment
